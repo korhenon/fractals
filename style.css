@@ -1,0 +1,46 @@
+* {
+    margin: 0;
+    outline: 0;
+}
+h1, h2, h3 {
+    text-align: center;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+article {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+img {
+    max-width: 80vw;
+}
+p {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+article {
+    padding: 10px 20px;
+}
+code {
+    white-space: pre-wrap;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+div {
+    text-align: center;
+}

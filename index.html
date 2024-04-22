@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Фракталы</title>
+</head>
+<body>
+    <header>
+        <h1>Что такое фрактал?</h1>
+        <img src="images/header.png" alt="">
+        <h3>Фракталы - самоподобные фигуры</h3>
+    </header>
+    <article>
+        <p>
+            Фракта́л (лат. fractus — дроблёный, сломанный, разбитый) — множество, обладающее свойством самоподобия (объект, в точности или приближённо совпадающий с частью себя самого, то есть целое имеет ту же форму, что и одна или более частей). В математике под фракталами понимают множества точек в евклидовом пространстве, имеющие дробную метрическую размерность (в смысле Минковского или Хаусдорфа), либо метрическую размерность, отличную от топологической, поэтому их следует отличать от прочих геометрических фигур, ограниченных конечным числом звеньев. Самоподобные фигуры, повторяющиеся конечное число раз, называются предфракталами.
+        </p>
+        <h2>Геометрические фракталы</h3>
+        <p>
+            Геометрические фракталы строятся поэтапно, сначала изображается основа, затем некоторые части основы заменяются на фрагмент. На каждом следующем этапе части уже построенной фигуры, аналогичные замененным частям основы, вновь заменяются на фрагмент, взятый в подходящем масштабе. Для визуализации геометрических фракталов чаще всего используют L-системы. Ниже представлены алгоритмы для визуализации двух фракталов: Снежинка Коха и Треугольник Серпинского
+        </p>
+        <h3>Снежинка Коха</h3>
+        <code>
+import turtle
+
+turtle.hideturtle()
+turtle.tracer(0)
+turtle.pensize(2)
+
+axiom = "A-A-A"
+buffer_string = ""
+rule = "A+A-A+A"
+iterations = 3
+
+for _ in range(iterations):
+    for c in axiom:
+        if c == "A":
+            buffer_string += rule
+        else:
+            buffer_string += c
+
+    axiom = buffer_string
+    buffer_string = ""
+
+angle = 60
+
+for c in axiom:
+    if c == "+":
+        turtle.right(angle)
+    elif c == "-":
+        turtle.left(angle * 2)
+    else:
+        turtle.forward(15)
+
+turtle.update()
+turtle.mainloop()
+        </code>
+        <img src="images/koh.png" alt="">
+        <h3>Треугольник Серпинского</h3>
+        <code>
+import turtle
+
+turtle.hideturtle()
+turtle.tracer(0)
+turtle.pensize(2)
+
+axiom = "A-B-B"
+a_rule = "A-B+A+B-A"
+b_rule = "BB"
+iterations = 3
+buffer_string = ""
+
+for i in range(iterations):
+    for c in axiom:
+        if c == "+" or c == "-":
+            buffer_string += c
+        elif c == "A":
+            buffer_string += a_rule
+        else:
+            buffer_string += b_rule
+
+    axiom = buffer_string
+    buffer_string = ""
+
+angle = 120
+
+for c in axiom:
+    if c == "+":
+        turtle.right(angle)
+    elif c == "-":
+        turtle.left(angle)
+    else:
+        turtle.forward(15)
+
+turtle.update()
+turtle.mainloop()
+        </code>
+        <img src="images/serpinsky.png" alt="">
+        <h2>Алгебраические фракталы</h3>
+        <p>Для визуализации алгебраических фракталов, не нужно придумывать сложных алгоритмов, потому что они представляют из себя множество точек в прямоугольной системе координат, можно перебрать все точки в определённой области, и закрасить их в зависимости от того насколько быстро они уходят в бесконечность</p>
+        <h3>Множество Жюлиа</h3>
+        <code>
+import pygame
+
+pygame.init()
+white = (255, 255, 255)
+black = (0, 0, 0)
+width = 800
+height = 600
+
+sc = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Фракталы")
+sc.fill(white)
+
+clock = pygame.time.Clock()
+
+c = complex(-0.2, 0.75)
+R = 2
+scale = 200
+offset = (0, 0)
+iterations = 100
+
+for x in range(-width // 2 + offset[0], width // 2 + offset[0]):
+    for y in range(-height // 2 + offset[1], height // 2 + offset[1]):
+        r = x / scale
+        i = y / scale
+        z = complex(r, i)
+        for n in range(iterations):
+            z = z ** 2 + c
+            if abs(z) > R:
+                break
+        else:
+            pygame.draw.circle(sc, black, (x + width // 2 - offset[0], y + height // 2 - offset[1]), 1)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            exit()
+
+    pygame.display.update()
+    clock.tick(30)
+        </code>
+        <h3>Множество Жюлиа в цвете</h3>
+        <code>
+import pygame
+
+pygame.init()
+
+white = (255, 255, 255)
+width = 800
+height = 600
+
+sc = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Фракталы")
+sc.fill(white)
+
+clock = pygame.time.Clock()
+
+c = complex(-0.2, 0.75)
+R = 2
+scale = 200
+offset = (0, 0)
+iterations = 100
+
+for x in range(-width // 2 + offset[0], width // 2 + offset[0]):
+    for y in range(-height // 2 + offset[1], height // 2 + offset[1]):
+        r = x / scale
+        i = y / scale
+        z = complex(r, i)
+        n = 0
+        for n in range(iterations):
+            z = z ** 2 + c
+            if abs(z) > R:
+                break
+        if n == iterations - 1:
+            color = (0, 0, 0)
+        elif iterations * 0.14 <= n:
+            color = (140, 140, 140)
+        elif iterations * 0.11 <= n:
+            color = (180, 180, 175)
+        elif iterations * 0.08 <= n:
+            color = (200, 200, 200)
+        elif iterations * 0.05 <= n:
+            color = (230, 230, 230)
+        else:
+            color = (255, 255, 255)
+        pygame.draw.circle(sc, color, (x + width // 2 - offset[0], y + height // 2 - offset[1]), 1)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            exit()
+
+    pygame.display.update()
+    clock.tick(30)
+        </code>
+        <img src="images/julia1.png" alt="">
+        <div>Множество Жюлиа с параметром c = -0.2 + 0.75i, масштаб 250</div>
+        <img src="images/julia2.png" alt="">
+        <div>Множество Жюлиа с параметром c = -0.2 + 0.75i, масштаб 1500</div>
+        <img src="images/julia3.png" alt="">
+        <div>Множество Жюлиа с параметром c = -0.2 + 0.75i, в цвете</div>
+        <h3>Множество мандельброта</h3>
+        <code>
+import pygame
+
+pygame.init()
+white = (255, 255, 255)
+black = (0, 0, 0)
+width = 800
+height = 600
+
+sc = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Фракталы")
+sc.fill(white)
+
+clock = pygame.time.Clock()
+
+R = 2
+scale = 200
+offset = (0, 0)
+iterations = 100
+
+for x in range(-width // 2 + offset[0], width // 2 + offset[0]):
+    for y in range(-height // 2 + offset[1], height // 2 + offset[1]):
+        r = x / scale
+        i = y / scale
+        c = complex(r, i)
+        z = 0
+        for n in range(iterations):
+            z = z ** 2 + c
+            if abs(z) > R:
+                break
+        else:
+            pygame.draw.circle(sc, black, (x + width // 2 - offset[0], y + height // 2 - offset[1]), 1)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            exit()
+
+    pygame.display.update()
+    clock.tick(30)
+        </code>
+        <h3>Множество мандельброта в цвете</h3>
+        <code>
+import pygame
+
+pygame.init()
+
+white = (255, 255, 255)
+width = 800
+height = 600
+
+sc = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Фракталы")
+sc.fill(white)
+
+clock = pygame.time.Clock()
+
+R = 2
+scale = 200
+offset = (0, 0)
+iterations = 100
+
+for x in range(-width // 2 + offset[0], width // 2 + offset[0]):
+    for y in range(-height // 2 + offset[1], height // 2 + offset[1]):
+        r = x / scale
+        i = y / scale
+        c = complex(r, i)
+        z = 0
+        n = 0
+        for n in range(iterations):
+            z = z ** 2 + c
+            if abs(z) > R:
+                break
+        if n == iterations - 1:
+            color = (0, 0, 0)
+        elif iterations * 0.14 <= n:
+            color = (140, 140, 140)
+        elif iterations * 0.11 <= n:
+            color = (180, 180, 175)
+        elif iterations * 0.08 <= n:
+            color = (200, 200, 200)
+        elif iterations * 0.05 <= n:
+            color = (230, 230, 230)
+        else:
+            color = (255, 255, 255)
+        pygame.draw.circle(sc, color, (x + width // 2 - offset[0], y + height // 2 - offset[1]), 1)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            exit()
+
+    pygame.display.update()
+    clock.tick(30)
+        </code>
+        <img src="images/mandelbrot1.png" alt="">
+        <div>Множество мандельброта, масштаб 200</div>
+        <img src="images/mandelbrot2.png" alt="">
+        <div>Множество мандельброта, масштаб 1500</div>
+        <img src="images/mandelbrot3.png" alt="">
+        <div>Множество мандельброта, в цвете</div>
+    </article>
+</body>
+</html>
